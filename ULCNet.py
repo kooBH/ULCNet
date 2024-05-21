@@ -49,19 +49,22 @@ class Encoders(nn.Module):
     def __init__(self, in_channels=8):
         super(Encoders,self).__init__()
 
-        self.conv11 = nn.Conv2d(in_channels,in_channels,(1,3))
+        self.conv11 = nn.Conv2d(in_channels,in_channels,(1,3),groups = in_channels)
         self.bn11 = nn.BatchNorm2d(in_channels)
         self.conv12 = nn.Conv2d(in_channels,32,(1,1))
         self.bn12 = nn.BatchNorm2d(32)
 
+        self.conv21 = nn.Conv2d(32,32,(1,3),padding=(0,1),groups=32)
         self.bn21 = nn.BatchNorm2d(32)
         self.conv22 = nn.Conv2d(32,64,(1,1))
         self.bn22 = nn.BatchNorm2d(64)
 
+        self.conv31 = nn.Conv2d(64,64,(1,3),padding=(0,1),groups=64)
         self.bn31 = nn.BatchNorm2d(64)
         self.conv32 = nn.Conv2d(64,96,(1,1))
         self.bn32 = nn.BatchNorm2d(96)
 
+        self.conv41 = nn.Conv2d(96,96,(1,3),padding=(0,1),groups=96)
         self.bn41 = nn.BatchNorm2d(96)
         self.conv42 = nn.Conv2d(96,128,(1,1))
         self.bn42 = nn.BatchNorm2d(128)
@@ -73,14 +76,17 @@ class Encoders(nn.Module):
         x = F.relu(self.bn11(self.conv11(x)))
         x = F.relu(self.bn12(self.conv12(x)))
 
-        x = F.relu(self.bn21(self.maxpool(x)))
+        x = F.relu(self.bn21(self.conv21(x)))
         x = F.relu(self.bn22(self.conv22(x)))
+        x = self.maxpool(x)
 
-        x = F.relu(self.bn31(self.maxpool(x)))
+        x = F.relu(self.bn31(self.conv31(x)))
         x = F.relu(self.bn32(self.conv32(x)))
+        x = self.maxpool(x)
 
-        x = F.relu(self.bn41(self.maxpool(x)))
+        x = F.relu(self.bn41(self.conv41(x)))
         x = F.relu(self.bn42(self.conv42(x)))
+        x = self.maxpool(x)
 
         return x
 

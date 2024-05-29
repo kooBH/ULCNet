@@ -241,7 +241,7 @@ class ULCNet(nn.Module):
         z = self.CNN(Y_hat)
 
         # Pointwise Conv
-        M = F.sigmoid(self.pointwise2(z))
+        M = F.tanh(self.pointwise2(z))
 
         # Clean Speach Estimation
         s_r = M[:,0] * x_r[:,0]
